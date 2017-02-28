@@ -1,21 +1,35 @@
 package edu.mtholyoke.cs341bd.bookz;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Model {
 	Map<String, GutenbergBook> library;
+	Map<String, ArrayList<String>> titleTerms;
 
 	public Model() throws IOException {
 		// start with an empty hash-map; tell it it's going to be big in advance:
 		library = new HashMap<>(40000);
+		initTitleTerms(library);
 		// do the hard work:
 		DataImport.loadJSONBooks(library);
 	}
 
+	private void initTitleTerms(Map<String, GutenbergBook> library) {
+		titleTerms = new HashMap<>();
+		for (Map.Entry<String, GutenbergBook> entry : library.entrySet()) {
+			String title = entry.getValue().longTitle;
+			String[] terms = title.split(" ");
+			for (String term : terms) {
+				if (!titleTerms.containsKey(term)) {
+					titleTerms.put(term, new ArrayList<>());
+				}
+				ArrayList<String> ids = titleTerms.get(term);
+				ids.add(entry.getKey());
+				titleTerms.put(term, ids);
+			}
+		}
+	}
 	public GutenbergBook getBook(String id) {
 		return library.get(id);
 	}
@@ -31,6 +45,21 @@ public class Model {
 			}
 		}
 		return matches;
+	}
+
+	public HashSet<GutenbergBook> getSearchResults(String query) {
+		String[] queryTerms = query.split(" ");
+		ArrayList<String> results = new ArrayList<>();
+		HashSet<GutenbergBook> retrieve = new HashSet<>();
+		for (String term : queryTerms) {
+			ArrayList<String> containedIn = titleTerms.get(term);
+			results.addAll(containedIn);
+		}
+		for (String book : results) {
+			GutenbergBook gBook = library.get(book);
+			retrieve.add(gBook);
+		}
+		return retrieve;
 	}
 
 	public List<GutenbergBook> getRandomBooks(int count) {

@@ -12,6 +12,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jfoley
@@ -92,13 +96,21 @@ public class BookzServer extends AbstractHandler {
 			String titleCmd = Util.getAfterIfStartsWith("/title/", path);
 			if(titleCmd != null) {
 				char firstChar = titleCmd.charAt(0);
-				view.showBookCollection(this.model.getBooksStartingWith(firstChar), resp);
+				view.showBookCollection(this.model.getBooksStartingWith(firstChar), resp, firstChar);
 			}
 
 			// Check for startsWith and substring
 			String bookId = Util.getAfterIfStartsWith("/book/", path);
 			if(bookId != null) {
 				view.showBookPage(this.model.getBook(bookId), resp);
+			}
+
+			String search = Util.getAfterIfStartsWith("/search/", path);
+			if (search != null) {
+				Map<String, String[]> parameterMap = req.getParameterMap();
+				String query = Util.join(parameterMap.get("message"));
+				HashSet<GutenbergBook> results = model.getSearchResults(query);
+				view.showSearchResultsPage(results, resp);
 			}
 
 			// Front page!
