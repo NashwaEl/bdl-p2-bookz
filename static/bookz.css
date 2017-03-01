@@ -39,9 +39,8 @@ h1, h2 {
     padding: 10px;
     font-size: 12pt;
     text-align: center;
-    color: #222222;
+    color: #313131;
     font-family: 'Lora', serif;
-    font-weight: lighter;
 }
 
 h3 {
@@ -297,7 +296,6 @@ div.side input {
     height: 3em;
     position: absolute;
     width: 100.4%;
-    border-radius: 0 0 15px 15px;
     margin-left: -21px;
     background-color: #df7b69;
     color: #403c44;
@@ -320,8 +318,7 @@ div {
 #top {
     height: 2.5em;
     background-color: #df7b69;
-    border-radius: 10px 10px 0 0;
-    margin: -22px -20px 15px -20px;
+    margin: -22px -21px 15px -21px;
 
 }
 
