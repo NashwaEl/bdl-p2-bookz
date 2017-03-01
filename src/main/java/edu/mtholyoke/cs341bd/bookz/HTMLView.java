@@ -120,7 +120,7 @@ public class HTMLView {
             	printBooks(html, books.subList(1,20));
             }else {
             	int start = pageNum*20 +1;
-            	int end = start + 20;
+            	int end = Math.min(books.size(), start + 20);
             	printBooks(html, books.subList(start, end));
             }
             
