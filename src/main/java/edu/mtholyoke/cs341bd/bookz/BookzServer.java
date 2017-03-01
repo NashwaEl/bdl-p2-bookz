@@ -150,7 +150,12 @@ public class BookzServer extends AbstractHandler {
 				html.flush();
 				view.printPageStart(html, "Bookz");
 				view.printSearchBar(html);
-				view.printSumbitted(html);
+				model.setFlaggedBooks(f.readErrorsFromFile());
+				if(model.getFlaggedBooks() != null && model.getFlaggedBooks().contains(book)){
+					view.printAlreadyFlagged(html);
+				}else{
+					view.printSumbitted(html);
+				}
 				view.printBooks(html, randomBooks);
 				view.printPageEnd(html);
 			}

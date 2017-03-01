@@ -95,11 +95,10 @@ public class HTMLView {
         try (PrintWriter html = resp.getWriter()) {
             printPageStart(html, "Bookz");
             printSearchBar(html);
-            int count = 0;
             html.append("<div class=\"wrapper\">");
             html.append("<div class=\"row\">");
             List<GutenbergBook> resultBooks = new ArrayList<>(books);
-            printBooks(html, resultBooks.subList(1,20));
+            printBooks(html, resultBooks.subList(0,Math.min(books.size(), 20)));
             html.append("</div>");
             System.out.print("count:  " + books.size());
             int numPages = books.size()/20;
@@ -188,6 +187,9 @@ public class HTMLView {
 
     public void printSumbitted(PrintWriter html) {
         html.println("<div id=\"submitted\"><p > Your issue has been added to our error log. We will try to fix it ASAP!  </p></div>");
+    }
+    public void printAlreadyFlagged(PrintWriter html) {
+        html.println("<div id=\"submitted\"><p > This book has already been flagged by a user. We are currently trying to fix it ASAP!  </p></div>");
     }
 
     void showFrontPage(Model model, HttpServletResponse resp) throws IOException {
