@@ -104,7 +104,7 @@ public class HTMLView {
             System.out.print("count:  " + books.size());
             int numPages = books.size()/20;
             if (numPages> 1){
-            	printPagesLinks(html,numPages);
+            	printPagesLinks(html,numPages,1);
             }
             
             printPageEnd(html);
@@ -126,11 +126,64 @@ public class HTMLView {
             
             int numPages = books.size()/20;
             if (numPages> 1){
-            	printPagesLinks(html,numPages);
+            	printPagesLinks(html,numPages, pageNum);
             }
             
             printPageEnd(html);
         }
+    }
+    
+    public void printPagesLinks(PrintWriter html, int numPages, int page){
+    	
+    	if (numPages > 5){
+    		html.append("<div class=\"page\">");
+    		int start = Math.max(1, page - 1);
+    		int page2 = page + 1;
+    		int page3 = page + 2;
+    		
+    		if (page >= 3){
+    			html.println("<a href='/page/" + 1 + "'>" + 1 + "</a> ");
+    			if((start -1) > 1){
+    				html.println("<a href='/page/" + page + "'>...</a> ");
+    			}
+    			
+    		}
+    		
+    		if (page != 1 && page != numPages){
+    			html.println("<a href='/page/" + start + "'>" + start + "</a> ");
+    		}
+    		
+    		if (page == numPages){
+    			page2 = start - 1;
+        		page3 = start - 2;
+        		html.println("<a href='/page/" + page3 + "'>" + page3 + "</a> ");
+        		html.println("<a href='/page/" + page2 + "'>" + page2+ "</a> ");
+    			html.println("<a href='/page/" + start + "'>" + start + "</a> ");
+        		html.println("<a href='/page/" + numPages + "'>" + numPages + "</a> ");
+    			
+    		}else{
+    			
+    			html.println("<a href='/page/" + page + "'>" + page + "</a> ");
+        		html.println("<a href='/page/" + page2 + "'>" + page2+ "</a> ");
+        		html.println("<a href='/page/" + page3 + "'>" + page3 + "</a> ");
+        		if((numPages - page3) > 1){
+    				html.println("<a href='/page/" + page + "'>...</a> ");
+    			}
+        		html.println("<a href='/page/" + numPages + "'>" + numPages + "</a> ");
+    		}
+    		
+    		html.append("<br><br><br>");
+            html.append("</div>");
+            
+    	}else {
+    		html.append("<div class=\"page\">");
+            for (int i =1; i<=numPages; i++ ){
+            	html.println("<a href='/page/" + i + "'>" + i + "</a> ");
+            }
+            html.append("<br><br><br>");
+            html.append("</div>");
+    	}
+      	 
     }
 
     public void printSumbitted(PrintWriter html) {
@@ -185,15 +238,6 @@ public class HTMLView {
          html.append("</div>");
     }
     
-    public void printPagesLinks(PrintWriter html, int numPages){
-   	 html.append("<div class=\"page\">");
-        for (int i =1; i<=numPages; i++ ){
-        	html.println("<a href='/page/" + i + "'>" + i + "</a> ");
-        }
-        html.append("<br><br><br>");
-        html.append("</div>");
-   }
-
 
     public String getRandomColor() {
         String[] colors = {"#9FC6C1", "#6F7869", "#8A8184", "#E3A7A3", "#F1D0CA", "#EFF0DA"};
