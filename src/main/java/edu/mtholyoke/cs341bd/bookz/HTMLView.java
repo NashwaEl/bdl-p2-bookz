@@ -48,7 +48,7 @@ public class HTMLView {
         html.println("</div>");
         html.println("</form>");
         html.println("</li>");
-        html.println("<li id=\"logo\">Bookz</li>");
+        html.println("<li id=\"logo\"><a href='#'>Bookz</a></li>");
         html.println("</ul>");
 
     }
