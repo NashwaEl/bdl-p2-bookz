@@ -120,9 +120,19 @@ public class BookzServer extends AbstractHandler {
 				String query = Util.join(parameterMap.get("query"));
 				System.out.println("--------Query------ " + query);
 				HashSet<GutenbergBook> results = model.getSearchResults(query);
+				model.setResultBooks(new ArrayList<GutenbergBook>(results));
 				view.showSearchResultsPage(results, resp);
+				
 			}
-
+			
+			String page = Util.getAfterIfStartsWith("/page/", path);
+			if(page != null){
+				List<GutenbergBook> queryResults = model.getResultBooks();
+				if (queryResults.size() != 0 ){
+					view.showBooksPage(queryResults, Integer.parseInt(page), resp);
+				}
+			}
+			
 			// Front page!
 			if ("/front".equals(path) || "/".equals(path)) {
 				view.showFrontPage(this.model, resp);
@@ -140,7 +150,12 @@ public class BookzServer extends AbstractHandler {
 				html.flush();
 				view.printPageStart(html, "Bookz");
 				view.printSearchBar(html);
-				view.printSumbitted(html);
+				model.setFlaggedBooks(f.readErrorsFromFile());
+				if(model.getFlaggedBooks() != null && model.getFlaggedBooks().contains(book)){
+					view.printAlreadyFlagged(html);
+				}else{
+					view.printSumbitted(html);
+				}
 				view.printBooks(html, randomBooks);
 				view.printPageEnd(html);
 			}

@@ -48,7 +48,7 @@ public class HTMLView {
         html.println("</div>");
         html.println("</form>");
         html.println("</li>");
-        html.println("<li id=\"logo\">Bookz</li>");
+        html.println("<li id=\"logo\"><a href='#'>Bookz</a></li>");
         html.println("</ul>");
 
     }
@@ -95,34 +95,101 @@ public class HTMLView {
         try (PrintWriter html = resp.getWriter()) {
             printPageStart(html, "Bookz");
             printSearchBar(html);
-            int count = 0;
             html.append("<div class=\"wrapper\">");
             html.append("<div class=\"row\">");
-            for (GutenbergBook book : books) {
-                showFlag(html, book);
-                if (count > 4) {
-                    count = 0;
-                    html.append("</div>");
-                    html.append("<<div class=\"row\">");
-                }
-                count++;
-                html.append("<div class=\"column\" style=\"background:" + getRandomColor() + "; border: solid " + getSpineColors() + "; border-width: 0 0 0 10pt;\" " +
-                        ">" +
-                        "<p class=\"title\" style=\"font-family: '" + getRandomFont() + "; \">" + book.title + "<p>" +
-                        "<p class=\"info\" > <button class=\"flag\">&#9654;</button><br><br>" + book.creator + "<br><br><a class=\"url\" href='" + book.getGutenbergURL() + "'>On Project Gutenberg</a><br><p>" +
-                        "</div>");
-            }
-            if (count < 6) {
-                html.append("</div>");
-                html.append("</div>");
-            }
+            List<GutenbergBook> resultBooks = new ArrayList<>(books);
+            printBooks(html, resultBooks.subList(0,Math.min(books.size(), 20)));
             html.append("</div>");
+            System.out.print("count:  " + books.size());
+            int numPages = books.size()/20;
+            if (numPages> 1){
+            	printPagesLinks(html,numPages,1);
+            }
+            
             printPageEnd(html);
         }
+    }
+    
+    public void showBooksPage(List<GutenbergBook> books, int pageNum, HttpServletResponse resp) throws IOException {
+    	try (PrintWriter html = resp.getWriter()) {
+        	System.out.println("Trying to show page: " + pageNum + " book size: "+ books.size());
+            printPageStart(html, "Bookz");
+            printSearchBar(html);
+            if(pageNum == 1){
+            	printBooks(html, books.subList(1,20));
+            }else {
+            	int start = pageNum*20 +1;
+            	int end = Math.min(books.size(), start + 20);
+            	printBooks(html, books.subList(start, end));
+            }
+            
+            int numPages = books.size()/20;
+            if (numPages> 1){
+            	printPagesLinks(html,numPages, pageNum);
+            }
+            
+            printPageEnd(html);
+        }
+    }
+    
+    public void printPagesLinks(PrintWriter html, int numPages, int page){
+    	
+    	if (numPages > 5){
+    		html.append("<div class=\"page\">");
+    		int start = Math.max(1, page - 1);
+    		int page2 = page + 1;
+    		int page3 = page + 2;
+    		
+    		if (page >= 3){
+    			html.println("<a href='/page/" + 1 + "'>" + 1 + "</a> ");
+    			if((start -1) > 1){
+    				html.println("<a href='/page/" + page + "'>...</a> ");
+    			}
+    			
+    		}
+    		
+    		if (page != 1 && page != numPages){
+    			html.println("<a href='/page/" + start + "'>" + start + "</a> ");
+    		}
+    		
+    		if (page == numPages){
+    			page2 = start - 1;
+        		page3 = start - 2;
+        		html.println("<a href='/page/" + page3 + "'>" + page3 + "</a> ");
+        		html.println("<a href='/page/" + page2 + "'>" + page2+ "</a> ");
+    			html.println("<a href='/page/" + start + "'>" + start + "</a> ");
+        		html.println("<a href='/page/" + numPages + "'>" + numPages + "</a> ");
+    			
+    		}else{
+    			
+    			html.println("<a href='/page/" + page + "'>" + page + "</a> ");
+        		html.println("<a href='/page/" + page2 + "'>" + page2+ "</a> ");
+        		html.println("<a href='/page/" + page3 + "'>" + page3 + "</a> ");
+        		if((numPages - page3) > 1){
+    				html.println("<a href='/page/" + page + "'>...</a> ");
+    			}
+        		html.println("<a href='/page/" + numPages + "'>" + numPages + "</a> ");
+    		}
+    		
+    		html.append("<br><br><br>");
+            html.append("</div>");
+            
+    	}else {
+    		html.append("<div class=\"page\">");
+            for (int i =1; i<=numPages; i++ ){
+            	html.println("<a href='/page/" + i + "'>" + i + "</a> ");
+            }
+            html.append("<br><br><br>");
+            html.append("</div>");
+    	}
+      	 
     }
 
     public void printSumbitted(PrintWriter html) {
         html.println("<div id=\"submitted\"><p > Your issue has been added to our error log. We will try to fix it ASAP!  </p></div>");
+    }
+    public void printAlreadyFlagged(PrintWriter html) {
+        html.println("<div id=\"submitted\"><p > This book has already been flagged by a user. We are currently trying to fix it ASAP!  </p></div>");
     }
 
     void showFrontPage(Model model, HttpServletResponse resp) throws IOException {
@@ -132,7 +199,7 @@ public class HTMLView {
 
             List<GutenbergBook> randomBooks = model.getRandomBooks(15);
             printBooks(html, randomBooks);
-
+            printAlphabeticalLinks(html);
 
             printPageEnd(html);
         }
@@ -160,15 +227,19 @@ public class HTMLView {
             html.append("</div>");
             html.append("</div>");
         }
-        html.append("<div class=\"page\">");
-        for (char letter = 'A'; letter <= 'Z'; letter++) {
-            html.println("<a href='/title/" + letter + "'>" + letter + "</a> ");
-        }
-        html.append("<br><br><br>");
-        html.append("</div>");
         html.append("</div>");
 
     }
+    
+    public void printAlphabeticalLinks(PrintWriter html){
+    	 html.append("<div class=\"page\">");
+         for (char letter = 'A'; letter <= 'Z'; letter++) {
+             html.println("<a href='/title/" + letter + "'>" + letter + "</a> ");
+         }
+         html.append("<br><br><br>");
+         html.append("</div>");
+    }
+    
 
     public String getRandomColor() {
         String[] colors = {"#9FC6C1", "#6F7869", "#8A8184", "#E3A7A3", "#F1D0CA", "#EFF0DA"};
