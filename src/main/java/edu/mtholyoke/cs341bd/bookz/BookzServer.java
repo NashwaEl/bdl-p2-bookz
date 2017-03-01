@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,9 +22,9 @@ import java.util.Map;
  * @author jfoley
  */
 public class BookzServer extends AbstractHandler {
-	Server jettyServer;
-	HTMLView view;
-	Model model;
+	private Server jettyServer;
+	private HTMLView view;
+	private Model model;
 
 	public BookzServer(String baseURL, int port) throws IOException {
 		view = new HTMLView(baseURL);
@@ -40,6 +41,12 @@ public class BookzServer extends AbstractHandler {
 		resources.setBaseResource(Resource.newResource("static/"));
 		staticCtx.setHandler(resources);
 
+		ContextHandler jsCtx = new ContextHandler();
+		jsCtx.setContextPath("/scripts");
+		ResourceHandler jsResources = new ResourceHandler();
+		jsResources.setBaseResource(Resource.newResource("scripts/"));
+		jsCtx.setHandler(jsResources);
+
 		// This context handler just points to the "handle" method of this
 		// class.
 		ContextHandler defaultCtx = new ContextHandler();
@@ -48,6 +55,7 @@ public class BookzServer extends AbstractHandler {
 
 		// Tell Jetty to use these handlers in the following order:
 		ContextHandlerCollection collection = new ContextHandlerCollection();
+		collection.addHandler(jsCtx);
 		collection.addHandler(staticCtx);
 		collection.addHandler(defaultCtx);
 		jettyServer.setHandler(collection);
@@ -109,6 +117,7 @@ public class BookzServer extends AbstractHandler {
 			if (search != null) {
 				Map<String, String[]> parameterMap = req.getParameterMap();
 				String query = Util.join(parameterMap.get("message"));
+				System.out.println("--------Query------ " + query);
 				HashSet<GutenbergBook> results = model.getSearchResults(query);
 				view.showSearchResultsPage(results, resp);
 			}
@@ -117,6 +126,28 @@ public class BookzServer extends AbstractHandler {
 			if ("/front".equals(path) || "/".equals(path)) {
 				view.showFrontPage(this.model, resp);
 				return;
+			}
+		} else if ("POST".equals(method) && "/submit".equals(path)) {
+			Map<String, String[]> parameterMap = req.getParameterMap();
+			String name = Util.join(parameterMap.get("name"));
+			String error = Util.join(parameterMap.get("error"));
+			String book = Util.join(parameterMap.get("book"));
+			System.out.println("user" + name);
+			System.out.println("error" + error);
+			System.out.println("book" + book);
+			Flag f = new Flag(name, error, book, System.currentTimeMillis());
+			f.writeErrorsToFile("errors.txt");
+			System.out.println(name + " user");
+			System.out.println(error + " error");
+			List<GutenbergBook> randomBooks = model.getRandomBooks(15);
+			try (PrintWriter html = resp.getWriter()) {
+				html.flush();
+				view.printPageStart(html, "Bookz");
+				view.printSearchBar(html);
+				view.printSumbitted(html);
+				view.showFlag(html);
+				view.printBooks(html, randomBooks);
+				view.printPageEnd(html);
 			}
 		}
 	}
