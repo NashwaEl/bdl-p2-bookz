@@ -18,13 +18,13 @@ public class Model {
 	private void initTitleTerms(Map<String, GutenbergBook> library) {
 		titleTerms = new HashMap<>();
 		for (Map.Entry<String, GutenbergBook> entry : library.entrySet()) {
-			String title = entry.getValue().longTitle;
+			String title = entry.getValue().title;
 			String[] terms = title.split(" ");
 			for (String term : terms) {
 				if (!titleTerms.containsKey(term)) {
-					titleTerms.put(term, new ArrayList<>());
+					titleTerms.put(term.toLowerCase(), new ArrayList<>());
 				}
-				ArrayList<String> ids = titleTerms.get(term);
+				ArrayList<String> ids = titleTerms.get(term.toLowerCase());
 				ids.add(entry.getKey());
 				titleTerms.put(term, ids);
 			}
@@ -52,11 +52,9 @@ public class Model {
 		ArrayList<String> results = new ArrayList<>();
 		HashSet<GutenbergBook> retrieve = new HashSet<>();
 		for (String term : queryTerms) {
-			ArrayList<String> containedIn = titleTerms.get(term);
-			if (titleTerms.containsKey(term)) {
+			ArrayList<String> containedIn = titleTerms.get(term.toLowerCase());
+			if (titleTerms.containsKey(term.toLowerCase())) {
 				results.addAll(containedIn);
-			} else {
-				System.out.println("There are no results :( ");
 			}
 		}
 		for (String book : results) {

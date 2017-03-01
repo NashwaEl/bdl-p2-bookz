@@ -25,6 +25,7 @@ public class BookzServer extends AbstractHandler {
 	private Server jettyServer;
 	private HTMLView view;
 	private Model model;
+	static String currentBook = "";
 
 	public BookzServer(String baseURL, int port) throws IOException {
 		view = new HTMLView(baseURL);
@@ -140,7 +141,6 @@ public class BookzServer extends AbstractHandler {
 				view.printPageStart(html, "Bookz");
 				view.printSearchBar(html);
 				view.printSumbitted(html);
-				view.showFlag(html);
 				view.printBooks(html, randomBooks);
 				view.printPageEnd(html);
 			}

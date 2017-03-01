@@ -68,7 +68,7 @@ public class HTMLView {
         html.println("</html>");
     }
 
-    public void showFlag(PrintWriter output) {
+    public void showFlag(PrintWriter output, GutenbergBook book) {
         output.println("  <div id=\"flagModal\" class=\"modal\">");
         output.println("    <div class=\"modal-content\">");
         output.println("      <div id=\"top\">");
@@ -81,7 +81,7 @@ public class HTMLView {
         output.println("           <label>Name:</label>");
         output.println("           <input type=\"text\" name=\"name\">");
         output.println("        </div>");
-        output.println("       <input type=\"hidden\" name=\"book\" value=\"etext77\" />"); //fix this
+        output.println("<input type=\"hidden\" name=\"book\" value=\"" + book.title + "\"/>");
         output.println("       </div>");
         output.println("        <label>Error:</label>");
         output.println("        <textarea name=\"error\"></textarea><br>");
@@ -99,6 +99,7 @@ public class HTMLView {
             html.append("<div class=\"wrapper\">");
             html.append("<div class=\"row\">");
             for (GutenbergBook book : books) {
+                showFlag(html, book);
                 if (count > 4) {
                     count = 0;
                     html.append("</div>");
@@ -130,7 +131,6 @@ public class HTMLView {
             printSearchBar(html);
 
             List<GutenbergBook> randomBooks = model.getRandomBooks(15);
-            showFlag(html);
             printBooks(html, randomBooks);
 
 
@@ -143,6 +143,7 @@ public class HTMLView {
         html.append("<div class=\"wrapper\">");
         html.append("<div class=\"row\">");
         for (GutenbergBook book : randomBooks) {
+            showFlag(html, book);
             if (count > 4) {
                 count = 0;
                 html.append("</div>");
@@ -196,7 +197,6 @@ public class HTMLView {
     public void showBookPage(GutenbergBook book, HttpServletResponse resp) throws IOException {
         try (PrintWriter html = resp.getWriter()) {
             printPageStart(html, "Bookz");
-            showFlag(html);
             printBookHTML(html, book);
             printPageEnd(html);
         }
