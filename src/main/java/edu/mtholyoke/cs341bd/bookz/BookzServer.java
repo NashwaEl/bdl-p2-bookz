@@ -113,10 +113,10 @@ public class BookzServer extends AbstractHandler {
 				view.showBookPage(this.model.getBook(bookId), resp);
 			}
 
-			String search = Util.getAfterIfStartsWith("/search/", path);
+			String search = Util.getAfterIfStartsWith("/search", path);
 			if (search != null) {
 				Map<String, String[]> parameterMap = req.getParameterMap();
-				String query = Util.join(parameterMap.get("message"));
+				String query = Util.join(parameterMap.get("query"));
 				System.out.println("--------Query------ " + query);
 				HashSet<GutenbergBook> results = model.getSearchResults(query);
 				view.showSearchResultsPage(results, resp);
@@ -132,13 +132,8 @@ public class BookzServer extends AbstractHandler {
 			String name = Util.join(parameterMap.get("name"));
 			String error = Util.join(parameterMap.get("error"));
 			String book = Util.join(parameterMap.get("book"));
-			System.out.println("user" + name);
-			System.out.println("error" + error);
-			System.out.println("book" + book);
 			Flag f = new Flag(name, error, book, System.currentTimeMillis());
 			f.writeErrorsToFile("errors.txt");
-			System.out.println(name + " user");
-			System.out.println(error + " error");
 			List<GutenbergBook> randomBooks = model.getRandomBooks(15);
 			try (PrintWriter html = resp.getWriter()) {
 				html.flush();

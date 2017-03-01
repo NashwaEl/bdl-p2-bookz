@@ -10,9 +10,9 @@ public class Model {
 	public Model() throws IOException {
 		// start with an empty hash-map; tell it it's going to be big in advance:
 		library = new HashMap<>(40000);
-		initTitleTerms(library);
 		// do the hard work:
 		DataImport.loadJSONBooks(library);
+		initTitleTerms(library);
 	}
 
 	private void initTitleTerms(Map<String, GutenbergBook> library) {
@@ -53,7 +53,11 @@ public class Model {
 		HashSet<GutenbergBook> retrieve = new HashSet<>();
 		for (String term : queryTerms) {
 			ArrayList<String> containedIn = titleTerms.get(term);
-			results.addAll(containedIn);
+			if (titleTerms.containsKey(term)) {
+				results.addAll(containedIn);
+			} else {
+				System.out.println("There are no results :( ");
+			}
 		}
 		for (String book : results) {
 			GutenbergBook gBook = library.get(book);

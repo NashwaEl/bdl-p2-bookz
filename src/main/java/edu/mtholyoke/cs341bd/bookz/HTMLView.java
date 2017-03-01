@@ -38,9 +38,9 @@ public class HTMLView {
     void printSearchBar(PrintWriter html) {
         html.println("<ul class=\"topnav\">");
         html.println("<li>");
-        html.println(" <form class=\" validate search\">");
+        html.println(" <form action=\"search\" method=\"GET\" class=\" validate search\">");
         html.println("<div class=\"input-group\">");
-        html.println("<input type=\"text\" class=\"form-control search\" placeholder=\"Search\">");
+        html.println("<input type=\"text\" class=\"form-control search\" placeholder=\"Search\" name=\"query\">");
         html.println("<span class=\"input-group-btn\">");
         html.println("<button class=\"btn btn-theme searchB\" type=\"submit\" id=\"navButton\"");
         html.println(">Search</button>");
@@ -97,20 +97,25 @@ public class HTMLView {
             printSearchBar(html);
             int count = 0;
             html.append("<div class=\"wrapper\">");
-            html.append("<ul>");
+            html.append("<div class=\"row\">");
             for (GutenbergBook book : books) {
                 if (count > 4) {
                     count = 0;
-                    html.append("</ul>");
                     html.append("</div>");
+                    html.append("<<div class=\"row\">");
                 }
                 count++;
-                html.append("<li>" + book.title + " by: " + book.creator + "<\\li>");
+                html.append("<div class=\"column\" style=\"background:" + getRandomColor() + "; border: solid " + getSpineColors() + "; border-width: 0 0 0 10pt;\" " +
+                        ">" +
+                        "<p class=\"title\" style=\"font-family: '" + getRandomFont() + "; \">" + book.title + "<p>" +
+                        "<p class=\"info\" > <button class=\"flag\">&#9654;</button><br><br>" + book.creator + "<br><br><a class=\"url\" href='" + book.getGutenbergURL() + "'>On Project Gutenberg</a><br><p>" +
+                        "</div>");
             }
-            if (count < 4) {
-                html.append("</ul>");
+            if (count < 6) {
+                html.append("</div>");
                 html.append("</div>");
             }
+            html.append("</div>");
             printPageEnd(html);
         }
     }
