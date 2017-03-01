@@ -21,8 +21,13 @@ span.datetime {
     margin-right: 10pt;
     color: #444;
 }
-h1.logo {
-    color: #865050;
+
+#logo {
+    color: #b7d5d8;
+    float: right;
+    margin: 1% 3%;
+    font-size: 15pt;
+    font-family: 'Dancing Script', cursive;
 }
 a.none {
     text-decoration: none;
@@ -37,11 +42,13 @@ div.book {
 
 h1, h2 {
     padding: 10px;
-    font-size: 12pt;
+    font-size: 13pt;
     text-align: center;
-    color: #313131;
+    color: #debcbc;
     font-family: 'Lora', serif;
+    font-weight: lighter;
 }
+
 
 h3 {
     font-size: 15pt;
@@ -60,8 +67,12 @@ span.datetime {
     color: #444;
 }
 
-h1.logo {
-    color: #fff;
+#logo {
+    color: #b7d5d8;
+    float: right;
+    margin: 1% 3%;
+    font-size: 15pt;
+    font-family: 'Dancing Script', cursive;
 }
 
 div.book {
