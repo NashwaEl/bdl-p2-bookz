@@ -98,25 +98,37 @@ public class HTMLView {
             int count = 0;
             html.append("<div class=\"wrapper\">");
             html.append("<div class=\"row\">");
-            for (GutenbergBook book : books) {
-                showFlag(html, book);
-                if (count > 4) {
-                    count = 0;
-                    html.append("</div>");
-                    html.append("<<div class=\"row\">");
-                }
-                count++;
-                html.append("<div class=\"column\" style=\"background:" + getRandomColor() + "; border: solid " + getSpineColors() + "; border-width: 0 0 0 10pt;\" " +
-                        ">" +
-                        "<p class=\"title\" style=\"font-family: '" + getRandomFont() + "; \">" + book.title + "<p>" +
-                        "<p class=\"info\" > <button class=\"flag\">&#9654;</button><br><br>" + book.creator + "<br><br><a class=\"url\" href='" + book.getGutenbergURL() + "'>On Project Gutenberg</a><br><p>" +
-                        "</div>");
-            }
-            if (count < 6) {
-                html.append("</div>");
-                html.append("</div>");
-            }
+            List<GutenbergBook> resultBooks = new ArrayList<>(books);
+            printBooks(html, resultBooks.subList(1,20));
             html.append("</div>");
+            System.out.print("count:  " + books.size());
+            int numPages = books.size()/20;
+            if (numPages> 1){
+            	printPagesLinks(html,numPages);
+            }
+            
+            printPageEnd(html);
+        }
+    }
+    
+    public void showBooksPage(List<GutenbergBook> books, int pageNum, HttpServletResponse resp) throws IOException {
+    	try (PrintWriter html = resp.getWriter()) {
+        	System.out.println("Trying to show page: " + pageNum + " book size: "+ books.size());
+            printPageStart(html, "Bookz");
+            printSearchBar(html);
+            if(pageNum == 1){
+            	printBooks(html, books.subList(1,20));
+            }else {
+            	int start = pageNum*20 +1;
+            	int end = start + 20;
+            	printBooks(html, books.subList(start, end));
+            }
+            
+            int numPages = books.size()/20;
+            if (numPages> 1){
+            	printPagesLinks(html,numPages);
+            }
+            
             printPageEnd(html);
         }
     }
@@ -172,6 +184,16 @@ public class HTMLView {
          html.append("<br><br><br>");
          html.append("</div>");
     }
+    
+    public void printPagesLinks(PrintWriter html, int numPages){
+   	 html.append("<div class=\"page\">");
+        for (int i =1; i<=numPages; i++ ){
+        	html.println("<a href='/page/" + i + "'>" + i + "</a> ");
+        }
+        html.append("<br><br><br>");
+        html.append("</div>");
+   }
+
 
     public String getRandomColor() {
         String[] colors = {"#9FC6C1", "#6F7869", "#8A8184", "#E3A7A3", "#F1D0CA", "#EFF0DA"};

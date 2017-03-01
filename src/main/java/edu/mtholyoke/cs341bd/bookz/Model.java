@@ -6,6 +6,7 @@ import java.util.*;
 public class Model {
 	Map<String, GutenbergBook> library;
 	Map<String, ArrayList<String>> titleTerms;
+	List<GutenbergBook> resultBooks;
 
 	public Model() throws IOException {
 		// start with an empty hash-map; tell it it's going to be big in advance:
@@ -14,7 +15,14 @@ public class Model {
 		DataImport.loadJSONBooks(library);
 		initTitleTerms(library);
 	}
-
+	
+	public void setResultBooks (List<GutenbergBook> resultBooks) {
+		this.resultBooks = resultBooks;
+	}
+	public List<GutenbergBook> getResultBooks() {
+		return this.resultBooks;
+	}
+	
 	private void initTitleTerms(Map<String, GutenbergBook> library) {
 		titleTerms = new HashMap<>();
 		for (Map.Entry<String, GutenbergBook> entry : library.entrySet()) {
