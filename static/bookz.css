@@ -40,7 +40,16 @@ div.book {
     background-color: #eee;
 }
 
-h1, h2 {
+h1 {
+    padding: 10px;
+    font-size: 13pt;
+    text-align: center;
+    color: #39393b;
+    font-family: 'Lora', serif;
+    font-weight: lighter;
+}
+
+h2 {
     padding: 10px;
     font-size: 13pt;
     text-align: center;
