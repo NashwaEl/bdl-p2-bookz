@@ -19,7 +19,10 @@ public class Model {
 		titleTerms = new HashMap<>();
 		for (Map.Entry<String, GutenbergBook> entry : library.entrySet()) {
 			String title = entry.getValue().title;
-			String[] terms = title.split(" ");
+			String author = entry.getValue().creator;
+			ArrayList<String> terms = new ArrayList(Arrays.asList(title.split(" ")));
+			if (author != null)
+				terms.addAll(Arrays.asList(author.split(" ")));
 			for (String term : terms) {
 				if (!titleTerms.containsKey(term)) {
 					titleTerms.put(term.toLowerCase(), new ArrayList<>());
