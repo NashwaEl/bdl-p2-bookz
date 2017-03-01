@@ -132,7 +132,7 @@ public class HTMLView {
 
             List<GutenbergBook> randomBooks = model.getRandomBooks(15);
             printBooks(html, randomBooks);
-
+            printAlphabeticalLinks(html);
 
             printPageEnd(html);
         }
@@ -160,14 +160,17 @@ public class HTMLView {
             html.append("</div>");
             html.append("</div>");
         }
-        html.append("<div class=\"page\">");
-        for (char letter = 'A'; letter <= 'Z'; letter++) {
-            html.println("<a href='/title/" + letter + "'>" + letter + "</a> ");
-        }
-        html.append("<br><br><br>");
-        html.append("</div>");
         html.append("</div>");
 
+    }
+    
+    public void printAlphabeticalLinks(PrintWriter html){
+    	 html.append("<div class=\"page\">");
+         for (char letter = 'A'; letter <= 'Z'; letter++) {
+             html.println("<a href='/title/" + letter + "'>" + letter + "</a> ");
+         }
+         html.append("<br><br><br>");
+         html.append("</div>");
     }
 
     public String getRandomColor() {
