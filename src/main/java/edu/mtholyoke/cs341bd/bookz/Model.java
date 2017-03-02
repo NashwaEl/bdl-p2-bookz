@@ -8,6 +8,7 @@ public class Model {
 	Map<String, ArrayList<String>> titleTerms;
 	List<GutenbergBook> resultBooks;
 	HashSet<String> flaggedBooks = new HashSet<String>(); 
+	char firstChar; 
 
 	public Model() throws IOException {
 		// start with an empty hash-map; tell it it's going to be big in advance:
@@ -15,6 +16,14 @@ public class Model {
 		// do the hard work:
 		DataImport.loadJSONBooks(library);
 		initTitleTerms(library);
+	}
+	
+	public void setFirstChar(char firstChar) {
+		this.firstChar = firstChar;
+	}
+	
+	public char getFirstChar() {
+		return this.firstChar;
 	}
 	
 	public void setFlaggedBooks(HashSet<String> flaggedBooks) {

@@ -110,9 +110,22 @@ public class HTMLView {
         }
     }
     
+    public void showBookCollection(List<GutenbergBook> theBooks, HttpServletResponse resp, char firstChar) throws IOException {
+        try (PrintWriter html = resp.getWriter()) {
+            printPageStart(html, "Bookz");
+            printSearchBar(html);
+            printBooks(html, theBooks.subList(0,Math.min(theBooks.size(), 20)));
+            
+            int numPages = theBooks.size()/20;
+            if (numPages> 1){
+            	printPagesLinks(html,numPages,1);
+            }
+
+            printPageEnd(html);
+        }
+    }
     public void showBooksPage(List<GutenbergBook> books, int pageNum, HttpServletResponse resp) throws IOException {
     	try (PrintWriter html = resp.getWriter()) {
-        	System.out.println("Trying to show page: " + pageNum + " book size: "+ books.size());
             printPageStart(html, "Bookz");
             printSearchBar(html);
             if(pageNum == 1){
@@ -285,18 +298,6 @@ public class HTMLView {
         // TODO, finish up fields.
         html.println("</a>");
         html.println("</div>");
-    }
-
-    public void showBookCollection(List<GutenbergBook> theBooks, HttpServletResponse resp, char firstChar) throws IOException {
-        try (PrintWriter html = resp.getWriter()) {
-            printPageStart(html, "Bookz");
-            printSearchBar(html);
-            html.println("<h2>Results starting with " + firstChar + "... ( " + theBooks.size() + " ) </h2>");
-
-            printBooks(html, theBooks.subList(0, 20));
-
-            printPageEnd(html);
-        }
     }
 
 

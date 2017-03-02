@@ -105,6 +105,7 @@ public class BookzServer extends AbstractHandler {
 			String titleCmd = Util.getAfterIfStartsWith("/title/", path);
 			if(titleCmd != null) {
 				char firstChar = titleCmd.charAt(0);
+				model.setFirstChar(firstChar);
 				view.showBookCollection(this.model.getBooksStartingWith(firstChar), resp, firstChar);
 			}
 
@@ -128,8 +129,12 @@ public class BookzServer extends AbstractHandler {
 			String page = Util.getAfterIfStartsWith("/page/", path);
 			if(page != null){
 				List<GutenbergBook> queryResults = model.getResultBooks();
-				if (queryResults.size() != 0 ){
+				if (queryResults != null ){
 					view.showBooksPage(queryResults, Integer.parseInt(page), resp);
+				}
+				List<GutenbergBook> booksStartingWithChar = this.model.getBooksStartingWith(this.model.getFirstChar());
+				if ( booksStartingWithChar != null) {
+					view.showBooksPage(booksStartingWithChar, Integer.parseInt(page), resp);
 				}
 			}
 			
