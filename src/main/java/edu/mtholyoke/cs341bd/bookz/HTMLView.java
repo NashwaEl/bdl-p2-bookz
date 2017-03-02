@@ -175,6 +175,13 @@ public class HTMLView {
     }
 
 
+    /**
+     * Prints page numbers on bottom of screen
+     *
+     * @param html
+     * @param numPages
+     * @param page
+     */
     public void printPagesLinks(PrintWriter html, int numPages, int page){
     	
     	if (numPages > 5){
@@ -300,7 +307,12 @@ public class HTMLView {
         html.append("</div>");
 
     }
-    
+
+
+    /**
+     * Print alphabetical page navigation on bottom of the screen
+     * @param html
+     */
     public void printAlphabeticalLinks(PrintWriter html){
     	 html.append("<div class=\"page\">");
          for (char letter = 'A'; letter <= 'Z'; letter++) {
