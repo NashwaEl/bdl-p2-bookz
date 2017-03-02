@@ -40,7 +40,12 @@ public class Model {
 	public List<GutenbergBook> getResultBooks() {
 		return this.resultBooks;
 	}
-	
+
+	/**
+	 * Initializes a map from terms found in titles and authors to the book ids they are contained in
+	 *
+	 * @param library
+	 */
 	private void initTitleTerms(Map<String, GutenbergBook> library) {
 		titleTerms = new HashMap<>();
 		for (Map.Entry<String, GutenbergBook> entry : library.entrySet()) {
@@ -76,6 +81,11 @@ public class Model {
 		return matches;
 	}
 
+	/**
+	 * Returns a hashet of all the books that match the search query
+	 * @param query
+	 * @return
+	 */
 	public HashSet<GutenbergBook> getSearchResults(String query) {
 		String[] queryTerms = query.split(" ");
 		ArrayList<String> results = new ArrayList<>();

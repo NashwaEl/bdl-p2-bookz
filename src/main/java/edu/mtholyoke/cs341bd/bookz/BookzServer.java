@@ -106,7 +106,7 @@ public class BookzServer extends AbstractHandler {
 			if(titleCmd != null) {
 				char firstChar = titleCmd.charAt(0);
 				model.setFirstChar(firstChar);
-				view.showBookCollection(this.model.getBooksStartingWith(firstChar), resp, firstChar);
+				view.showBookCollection(this.model.getBooksStartingWith(firstChar), resp);
 			}
 
 			// Check for startsWith and substring

@@ -35,6 +35,11 @@ public class HTMLView {
         html.println("  <body>");
     }
 
+    /**
+     * Print HTML for search bae
+     *
+     * @param html - print writer
+     */
     void printSearchBar(PrintWriter html) {
         html.println("<ul class=\"topnav\">");
         html.println("<li>");
@@ -68,6 +73,11 @@ public class HTMLView {
         html.println("</html>");
     }
 
+    /**
+     * Prints HTML for modal to flag books
+     * @param output - print writer
+     * @param book - book we are flagging
+     */
     public void showFlag(PrintWriter output, GutenbergBook book) {
         output.println("  <div id=\"flagModal\" class=\"modal\">");
         output.println("    <div class=\"modal-content\">");
@@ -91,15 +101,18 @@ public class HTMLView {
         output.println("  </div>");
     }
 
+    /**
+     * Prints results from query
+     * @param books - resulting books
+     * @param resp
+     * @throws IOException
+     */
     void showSearchResultsPage(HashSet<GutenbergBook> books, HttpServletResponse resp) throws IOException {
         try (PrintWriter html = resp.getWriter()) {
             printPageStart(html, "Bookz");
             printSearchBar(html);
-            html.append("<div class=\"wrapper\">");
-            html.append("<div class=\"row\">");
             List<GutenbergBook> resultBooks = new ArrayList<>(books);
             printBooks(html, resultBooks.subList(0,Math.min(books.size(), 20)));
-            html.append("</div>");
             System.out.print("count:  " + books.size());
             int numPages = books.size()/20;
             if (numPages> 1){
@@ -109,8 +122,16 @@ public class HTMLView {
             printPageEnd(html);
         }
     }
-    
-    public void showBookCollection(List<GutenbergBook> theBooks, HttpServletResponse resp, char firstChar) throws IOException {
+
+
+    /**
+     * Print the resulting collection of books
+     *
+     * @param theBooks - general set of books
+     * @param resp
+     * @throws IOException
+     */
+    public void showBookCollection(List<GutenbergBook> theBooks, HttpServletResponse resp) throws IOException {
         try (PrintWriter html = resp.getWriter()) {
             printPageStart(html, "Bookz");
             printSearchBar(html);
@@ -124,6 +145,14 @@ public class HTMLView {
             printPageEnd(html);
         }
     }
+
+    /**
+     *
+     * @param books
+     * @param pageNum
+     * @param resp
+     * @throws IOException
+     */
     public void showBooksPage(List<GutenbergBook> books, int pageNum, HttpServletResponse resp) throws IOException {
     	try (PrintWriter html = resp.getWriter()) {
             printPageStart(html, "Bookz");
@@ -144,7 +173,8 @@ public class HTMLView {
             printPageEnd(html);
         }
     }
-    
+
+
     public void printPagesLinks(PrintWriter html, int numPages, int page){
     	
     	if (numPages > 5){
@@ -196,16 +226,33 @@ public class HTMLView {
             html.append("<br><br><br>");
             html.append("</div>");
     	}
-      	 
+
     }
 
+    /**
+     * Div containing a message to let the user know that their error has been submitted
+     * @param html - print writer
+     */
     public void printSumbitted(PrintWriter html) {
         html.println("<div id=\"submitted\"><p > Your issue has been added to our error log. We will try to fix it ASAP!  </p></div>");
     }
+
+    /**
+     * Div containing a message to let the user know that this particular book has already been flagged by a user
+     * @param html
+     */
     public void printAlreadyFlagged(PrintWriter html) {
         html.println("<div id=\"submitted\"><p > This book has already been flagged by a user. We are currently trying to fix it ASAP!  </p></div>");
     }
 
+    /**
+     * Show the front page with random books when the user first loads Bookz
+     * @param model
+     * @param resp
+     * @param flagged
+     * @param alreadyFlagged
+     * @throws IOException
+     */
     void showFrontPage(Model model, HttpServletResponse resp, boolean flagged, boolean alreadyFlagged) throws IOException {
         try (PrintWriter html = resp.getWriter()) {
             printPageStart(html, "Bookz");
@@ -223,6 +270,11 @@ public class HTMLView {
         }
     }
 
+    /**
+     * Print the individual books
+     * @param html - print writer
+     * @param randomBooks - random books to display
+     */
     public void printBooks(PrintWriter html, List<GutenbergBook> randomBooks) {
         int count = 0;
         html.append("<div class=\"wrapper\">");
@@ -257,8 +309,12 @@ public class HTMLView {
          html.append("<br><br><br>");
          html.append("</div>");
     }
-    
 
+
+    /**
+     * Returns a random hex code for book color
+     * @return
+     */
     public String getRandomColor() {
         String[] colors = {"#9FC6C1", "#6F7869", "#8A8184", "#E3A7A3", "#F1D0CA", "#EFF0DA"};
         Random rand = new Random();
@@ -267,6 +323,10 @@ public class HTMLView {
         return color;
     }
 
+    /**
+     * Returns a random hex code for spine color
+     * @return
+     */
     public String getSpineColors() {
         String[] colors = {"#635647", "#4D3925", "#A1703B", "#73502E", "#594F44", "#544A41"};
         Random rand = new Random();
@@ -275,6 +335,10 @@ public class HTMLView {
         return color;
     }
 
+    /**
+     * Returns a random font to be displayed on book cover
+     * @return
+     */
     public String getRandomFont() {
         String[] colors = {"Amatic SC', cursive", "Indie Flower', cursive", "Gloria Hallelujah', cursive", "Shadows Into Light', cursive", "Dancing Script', cursive"};
         Random rand = new Random();
@@ -305,11 +369,6 @@ public class HTMLView {
         html.println("</div>");
     }
 
-
-    public void printResults(PrintWriter html) {
-
-    }
-
     public String boldSearchTerms(HashSet<String> searchTerms, String title) {
         StringBuilder html = new StringBuilder();
         for (String term : title.split(" ")) {
@@ -321,26 +380,5 @@ public class HTMLView {
         }
         return html.toString();
 
-    }
-
-    public static String encodeParametersInURL(Map<String, String> params, String url) {
-        StringBuilder output = new StringBuilder();
-        output.append(url);
-        output.append('?');
-
-        try {
-            int index = 0;
-            for (Map.Entry<String, String> kv : params.entrySet()) {
-                if (index > 0) output.append('&');
-                output.append(URLEncoder.encode(kv.getKey(), "UTF-8"));
-                output.append('=');
-                output.append(URLEncoder.encode(kv.getValue(), "UTF-8"));
-                index++;
-            }
-        } catch (UnsupportedEncodingException uee) {
-            // This should never happen, because "UTF-8" is always installed in Java.
-            throw new AssertionError(uee);
-        }
-        return output.toString();
     }
 }
