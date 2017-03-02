@@ -180,8 +180,9 @@ public class HTMLView {
         		html.println("<a href='/page/" + page3 + "'>" + page3 + "</a> ");
         		if((numPages - page3) > 1){
     				html.println("<a href='/page/" + page + "'>...</a> ");
+    				html.println("<a href='/page/" + numPages + "'>" + numPages + "</a> ");
     			}
-        		html.println("<a href='/page/" + numPages + "'>" + numPages + "</a> ");
+        		
     		}
     		
     		html.append("<br><br><br>");
