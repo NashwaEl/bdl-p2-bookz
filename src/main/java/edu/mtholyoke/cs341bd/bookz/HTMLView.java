@@ -206,11 +206,15 @@ public class HTMLView {
         html.println("<div id=\"submitted\"><p > This book has already been flagged by a user. We are currently trying to fix it ASAP!  </p></div>");
     }
 
-    void showFrontPage(Model model, HttpServletResponse resp) throws IOException {
+    void showFrontPage(Model model, HttpServletResponse resp, boolean flagged, boolean alreadyFlagged) throws IOException {
         try (PrintWriter html = resp.getWriter()) {
             printPageStart(html, "Bookz");
             printSearchBar(html);
-
+            if (flagged && alreadyFlagged){
+        		printAlreadyFlagged(html);
+            }else if (flagged){
+        		printSumbitted(html);
+            }
             List<GutenbergBook> randomBooks = model.getRandomBooks(15);
             printBooks(html, randomBooks);
             printAlphabeticalLinks(html);

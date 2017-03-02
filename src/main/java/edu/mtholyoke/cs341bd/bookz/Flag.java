@@ -22,6 +22,8 @@ public class Flag {
         this.timestamp = timestamp;
         this.book = book;
     }
+    
+    public Flag(){};
 
     public void writeErrorsToFile(String fileName) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {

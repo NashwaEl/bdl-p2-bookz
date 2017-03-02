@@ -140,30 +140,32 @@ public class BookzServer extends AbstractHandler {
 			
 			// Front page!
 			if ("/front".equals(path) || "/".equals(path)) {
-				view.showFrontPage(this.model, resp);
+				view.showFrontPage(this.model, resp, false, false);
 				return;
 			}
 		} else if ("POST".equals(method) && "/submit".equals(path)) {
+			Flag flag = new Flag();
 			Map<String, String[]> parameterMap = req.getParameterMap();
 			String name = Util.join(parameterMap.get("name"));
 			String error = Util.join(parameterMap.get("error"));
 			String book = Util.join(parameterMap.get("book"));
-			Flag f = new Flag(name, error, book, System.currentTimeMillis());
-			f.writeErrorsToFile("errors.txt");
-			List<GutenbergBook> randomBooks = model.getRandomBooks(15);
+			//check if book has already been flagged, before flagging it. 
 			try (PrintWriter html = resp.getWriter()) {
 				html.flush();
-				view.printPageStart(html, "Bookz");
-				view.printSearchBar(html);
-				model.setFlaggedBooks(f.readErrorsFromFile());
+				model.setFlaggedBooks(flag.readErrorsFromFile());
 				if(model.getFlaggedBooks() != null && model.getFlaggedBooks().contains(book)){
-					view.printAlreadyFlagged(html);
+					view.showFrontPage(this.model, resp, true, true);
 				}else{
-					view.printSumbitted(html);
+					view.showFrontPage(this.model, resp, true, false);
 				}
-				view.printBooks(html, randomBooks);
 				view.printPageEnd(html);
+				
 			}
+			//flag the book
+			Flag f = new Flag(name, error, book, System.currentTimeMillis());
+			f.writeErrorsToFile("errors.txt");
+			
+			
 		}
 	}
 }
